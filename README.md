@@ -1,6 +1,6 @@
 # Monodomain solved with SPH
 
-Solves the monodomain equations with the Smoothed Particle Hydrodynamics method. The monodomain equation is defined as:
+Solves the monodomain equations with the [Smoothed Particle Hydrodynamics method](http://www.astro.lu.se/~david/teaching/SPH/notes/annurev.aa.30.090192.pdf). The monodomain equation is defined as:
 
 grad dot (sigma(grad(Vm))) = Im
 
