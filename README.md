@@ -1,5 +1,4 @@
 # Monodomain solved with SPH
-============================
 
 Solves the monodomain equations with the Smoothed Particle Hydrodynamics method. The monodomain equation is defined as:
 
@@ -10,7 +9,7 @@ beta is the surface-to-volume ratio, Cm is the membrane capacitance, iion is the
   
 The monodomain model can be used to test membrane models, before implementing them into the more realistic bidomain model.
 
-The application also solves the monodomain equations by Finite Differences and the solution is used for comparisson purposes. For the Finite Differences solver, the work by user ["leongraham"](https://github.com/leongraham/monodomain) is used. The proposed code is based on said work, and uses the same model setup.
+The application also solves the monodomain equations by Finite Differences and the solution is used for comparisson purposes. For the Finite Differences solver, the work by user [leongraham](https://github.com/leongraham/monodomain) is used. The proposed code is based on said work, and uses the same model setup.
 
 ### Model setup
 
