@@ -3,8 +3,8 @@
 # Display results with matplotlib    # 
 # Reads an output file into a numpy  # 
 # array and displays scalar field.   #
-# Uses python3.		             # 
-#				     #
+# Uses python3.		                 # 
+#				                     #
 ######################################
 
 import numpy as np
@@ -36,7 +36,6 @@ for i in range(a.shape[0]):
     b=a[i,:].reshape((100,100)) 
     #get correct orientation with b.T (i.e. transpose)
     im=plt.imshow(b.T, interpolation='bicubic', extent=[0,1,0, 1], vmin=min, vmax=max)
-    # im=plt.imshow(b.T, interpolation='bilinear', extent=[0,1,0, 1], vmin=0, vmax=100)
     ims.append([im])
     plt.pause(0.1)
 #plt.show()

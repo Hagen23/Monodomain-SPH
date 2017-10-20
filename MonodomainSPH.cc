@@ -16,7 +16,6 @@ monodomainSPH::monodomainSPH()
 
     Cm = 1.0;
     Beta = 140;
-	Beta_1 = 1.0f / Beta;
 	isStimOn = false;
 
     sigma = 1.0f;
@@ -32,7 +31,6 @@ monodomainSPH::monodomainSPH()
 	// Number_Cells = (int)Grid_Size.x * (int)Grid_Size.y * (int)Grid_Size.z;
 	Number_Cells = (int)Grid_Size.x * (int)Grid_Size.y;
     
-    Stand_Density = 100.0f;
     Time_Delta = 0.005; //0.4 * kernel / sqrt(max_vel.magnitudeSquared());
 
     Particles = new Particle[Max_Number_Paticles];
@@ -146,24 +144,6 @@ m3Real monodomainSPH::B_spline_2(m3Real r)
 		return 0;
 }
 
-/// For density computation
-m3Real monodomainSPH::Poly6(m3Real r2)
-{
-	return (r2 >= 0 && r2 <= kernel*kernel) ? Poly6_constant * pow(kernel * kernel - r2, 3) : 0;
-}
-
-/// For force of pressure computation
-m3Real monodomainSPH::Spiky(m3Real r)
-{
-	return (r >= 0 && r <= kernel ) ? -Spiky_constant * (kernel - r) * (kernel - r) : 0;
-}
-
-/// For viscosity computation
-m3Real monodomainSPH::Visco(m3Real r)
-{
-	return (r >= 0 && r <= kernel ) ? Spiky_constant * (kernel - r) : 0;
-}
-
 void monodomainSPH::Find_neighbors()
 {
 	int hash;
@@ -178,17 +158,6 @@ void monodomainSPH::Find_neighbors()
 		hash = Calculate_Cell_Hash(Calculate_Cell_Position(p->pos));
 		Cells[hash].contained_particles.push_back(p);
 	}
-
-	// for(int i = 0; i < Number_Cells; i++)
-	// {
-	// 	int count = 0;
-	// 	cout << "Cell "<< i ;
-	// 	for(Particle* p : Cells[i].contained_particles)
-	// 		count++;
-	// 	cout << " count " << count << endl;
-	// }
-
-	// int test = 0;
 }
 
 void monodomainSPH::Compute_Density_SingPressure()
@@ -219,14 +188,11 @@ void monodomainSPH::Compute_Density_SingPressure()
 			{
 				m3Vector Distance;
 				Distance = p->pos - np->pos;
-				// m3Real dis2 = (m3Real)Distance.magnitudeSquared();
-				// p->dens += np->mass * Poly6(dis2);
+				
 				m3Real r = (m3Real)Distance.magnitude();
 				p->dens += np->mass * B_spline(r);
 			}
 		}
-
-		// p->dens += p->mass * Poly6(0.0f);
 	}
 }
 
@@ -264,19 +230,13 @@ void monodomainSPH::calculate_voltage()
 				{
 					m3Real dis = sqrt(dis2);
 					float Volume = np->mass / np->dens;
-					// p->Vm += (np->Vm) * Volume * Visco(dis);
+					
 					p->Inter_Vm += (np->Vm - p->Vm) * Volume * B_spline_2(dis);
-					// p->Inter_Vm += (np->Vm - p->Vm) * Volume * Visco(dis);
 				}
 			}
 		}
 		
-		// float Cm_1 = 1.0f / Cm;
-
 		p->Inter_Vm += (sigma / (Beta * Cm)) * p->Inter_Vm - ((p->Iion - p->stim * Time_Delta / p->mass) / Cm);
-		
-		// p->Vm = (p->Vm * Beta_1 * sigma + p->Iion + p->stim) * Cm_1 * Time_Delta;
-		// p->Vm /= p->mass;
     }
 }
 
@@ -295,10 +255,8 @@ void monodomainSPH::calculate_cell_model()
 		u = (p->Vm - FH_Vr) / denom;
 
 		p->Iion += Time_Delta * (C1*u*(u - asd)*(u - 1.0) + C2* p->w) / p->mass ;
-		// p->Iion /= p->mass;
-		// p->Iion /= p->mass != 0.0f ? p->mass : 1;
+		
 		p->w += Time_Delta * C3*(u - C4*p->w) / p->mass;
-		// p->w/=p->mass;
 	}
 }
 
